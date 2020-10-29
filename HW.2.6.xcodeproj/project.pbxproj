@@ -10,7 +10,7 @@
 		3B62AC26253968EA00524F0E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B62AC25253968EA00524F0E /* AppDelegate.swift */; };
 		3B62AC28253968EA00524F0E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B62AC27253968EA00524F0E /* SceneDelegate.swift */; };
 		3B62AC2A253968EA00524F0E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B62AC29253968EA00524F0E /* ViewController.swift */; };
-		3B62AC2D253968EA00524F0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B62AC2B253968EA00524F0E /* Main.storyboard */; };
+		3B62AC2D253968EA00524F0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B62AC2B253968EA00524F0E /* Main.storyboard */; settings = {ASSET_TAGS = (2, ); }; };
 		3B62AC2F253968EC00524F0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B62AC2E253968EC00524F0E /* Assets.xcassets */; };
 		3B62AC32253968EC00524F0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B62AC30253968EC00524F0E /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -126,6 +126,11 @@
 		3B62AC1A253968EA00524F0E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					0,
+					1,
+					2,
+				);
 				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1200;
 				TargetAttributes = {

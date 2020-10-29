@@ -32,19 +32,45 @@ class ViewController: UIViewController {
         setValueToLabels()
     }
 
-    @IBAction func redSliderAction() {
-        currentRedValue = CGFloat(redSlider.value)
-        redValueLabel.text = String(format: "%.2f", redSlider.value)
-        setColorToColorView()
-    }
-    @IBAction func greenSliderAction() {
-        currentGreenValue = CGFloat(greenSlider.value)
-        greenValueLabel.text = String(format: "%.2f", greenSlider.value)
-        setColorToColorView()
-    }
-    @IBAction func blueSliderAction() {
-        currentBlueValue = CGFloat(blueSlider.value)
-        blueValueLabel.text = String(format: "%.2f", blueSlider.value)
+//    @IBAction func redSliderAction() {
+//        currentRedValue = CGFloat(redSlider.value)
+//        redValueLabel.text = String(format: "%.2f", redSlider.value)
+//        setColorToColorView()
+//    }
+//    @IBAction func greenSliderAction() {
+//        currentGreenValue = CGFloat(greenSlider.value)
+//        greenValueLabel.text = String(format: "%.2f", greenSlider.value)
+//        setColorToColorView()
+//    }
+//    @IBAction func blueSliderAction() {
+//        currentBlueValue = CGFloat(blueSlider.value)
+//        blueValueLabel.text = String(format: "%.2f", blueSlider.value)
+//        setColorToColorView()
+//    }
+    
+    @IBAction func rgbSlidersAction(_ sender: UISlider) {
+        switch sender.tag {
+        case 0:
+            currentRedValue = CGFloat(sender.value)
+//            redValueLabel.text = String(
+//                format: "%.2f",
+//                sender.value
+//            )
+        case 1:
+            currentGreenValue = CGFloat(sender.value)
+//            greenValueLabel.text = String(
+//                format: "%.2f",
+//                sender.value
+//            )
+        case 2:
+            currentBlueValue = CGFloat(sender.value)
+//            blueValueLabel.text = String(
+//                format: "%.2f",
+//                sender.value
+//            )
+        default: break
+        }
+        setValueToLabels(sender)
         setColorToColorView()
     }
     
@@ -64,11 +90,23 @@ class ViewController: UIViewController {
         blueSlider.value = Float(currentBlueValue)
     }
     
-    private func setValueToLabels() {
-        redValueLabel.text = String(format: "%.2f", currentRedValue)
-        greenValueLabel.text = String(format: "%.2f", currentGreenValue)
-        blueValueLabel.text = String(format: "%.2f", currentBlueValue)
+    private func setValueToLabels(_ slider: UISlider? = nil) {
+        if slider == nil {
+            redValueLabel.text = String(format: "%.2f", currentRedValue)
+            greenValueLabel.text = String(format: "%.2f", currentGreenValue)
+            blueValueLabel.text = String(format: "%.2f", currentBlueValue)
+        } else {
+            switch slider?.tag {
+            case 0:
+                redValueLabel.text = String(format: "%.2f", currentRedValue)
+            case 1:
+                greenValueLabel.text = String(format: "%.2f", currentGreenValue)
+            case 2:
+                blueValueLabel.text = String(format: "%.2f", currentBlueValue)
+//                slider?.value
+            default:break
+            }
+        }
     }
-
 }
 

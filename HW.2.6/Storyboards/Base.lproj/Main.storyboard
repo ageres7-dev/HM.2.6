@@ -53,21 +53,21 @@
                                         <rect key="frame" x="-2" y="0.0" width="236" height="31"/>
                                         <color key="tintColor" systemColor="systemRedColor"/>
                                         <connections>
-                                            <action selector="redSliderAction" destination="BYZ-38-t0r" eventType="valueChanged" id="5yc-EB-J5J"/>
+                                            <action selector="rgbSlidersAction:" destination="BYZ-38-t0r" eventType="valueChanged" id="GDC-Mn-dhV"/>
                                         </connections>
                                     </slider>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="EqW-FX-siq">
+                                    <slider opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="EqW-FX-siq">
                                         <rect key="frame" x="-2" y="54" width="236" height="31"/>
                                         <color key="tintColor" systemColor="systemGreenColor"/>
                                         <connections>
-                                            <action selector="greenSliderAction" destination="BYZ-38-t0r" eventType="valueChanged" id="mK4-dc-E34"/>
+                                            <action selector="rgbSlidersAction:" destination="BYZ-38-t0r" eventType="valueChanged" id="n3t-8Z-UAU"/>
                                         </connections>
                                     </slider>
-                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Lhc-LD-Xvb">
+                                    <slider opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Lhc-LD-Xvb">
                                         <rect key="frame" x="-2" y="108" width="236" height="31"/>
                                         <color key="tintColor" systemColor="systemBlueColor"/>
                                         <connections>
-                                            <action selector="blueSliderAction" destination="BYZ-38-t0r" eventType="valueChanged" id="ldE-WZ-dNt"/>
+                                            <action selector="rgbSlidersAction:" destination="BYZ-38-t0r" eventType="valueChanged" id="iFM-tZ-bFG"/>
                                         </connections>
                                     </slider>
                                 </subviews>
