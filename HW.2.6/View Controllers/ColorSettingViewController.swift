@@ -19,36 +19,61 @@ class ColorSettingViewController: UIViewController {
     @IBOutlet var greenValueLabel: UILabel!
     @IBOutlet var blueValueLabel: UILabel!
     
-    private var currentRedValue = CGFloat.random(in: 0...1)
-    private var currentGreenValue = CGFloat.random(in: 0...1)
-    private var currentBlueValue = CGFloat.random(in: 0...1)
+    var viewBackgrounColor: UIColor!
+    var delegate: ColorSettingViewControllerDelegate!
+    
+//    var currentColorView: UIColor {
+//        colorView.backgroundColor!
+//    }
+    
+    private var currentRedValue: CGFloat = 0
+    private var currentGreenValue: CGFloat = 0
+    private var currentBlueValue: CGFloat = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
    
         colorView.layer.cornerRadius = 15
+        
+        setRGBValue(color: viewBackgrounColor)
+//        colorView.backgroundColor = viewBackgrounColor
         setColorToColorView()
         setValueToSliders()
         setValueToLabels()
     }
     
+    
     @IBAction func rgbSlidersAction(_ sender: UISlider) {
         switch sender.tag {
-        case 0:
-            currentRedValue = CGFloat(sender.value)
-        case 1:
-            currentGreenValue = CGFloat(sender.value)
-        case 2:
-            currentBlueValue = CGFloat(sender.value)
+        case 0: currentRedValue = CGFloat(sender.value)
+        case 1: currentGreenValue = CGFloat(sender.value)
+        case 2: currentBlueValue = CGFloat(sender.value)
         default: break
         }
+//        print("rgbSlidersAction - red \(currentRedValue), green \(currentGreenValue), blue \(currentBlueValue) ")
         setValueToLabels(sender)
         setColorToColorView()
     }
     
+    @IBAction func doneButtonPressed() {
+        delegate.setBackgroung(
+            color: colorView.backgroundColor!
+        )
+        dismiss(animated: true)
+    }
+    
+    private func setRGBValue(color:UIColor) {
+        color.getRed(&currentRedValue,
+                     green: &currentGreenValue,
+                     blue: &currentBlueValue,
+                     alpha: nil)
+//        print("setRGBValue - red \(currentRedValue), green \(currentGreenValue), blue \(currentBlueValue) ")
+//
+    }
+    
     private func setColorToColorView() {
         let currentColor = UIColor(
-            displayP3Red: currentRedValue,
+            red: currentRedValue,
             green: currentGreenValue,
             blue: currentBlueValue,
             alpha: 1
@@ -62,23 +87,35 @@ class ColorSettingViewController: UIViewController {
         blueSlider.value = Float(currentBlueValue)
     }
     
+    //переделать
     private func setValueToLabels(_ slider: UISlider? = nil) {
-        if slider == nil {
-            redValueLabel.text = String(format: "%.2f", currentRedValue)
-            greenValueLabel.text = String(format: "%.2f", currentGreenValue)
-            blueValueLabel.text = String(format: "%.2f", currentBlueValue)
-        } else {
-            switch slider?.tag {
-            case 0:
-                redValueLabel.text = String(format: "%.2f", currentRedValue)
-            case 1:
-                greenValueLabel.text = String(format: "%.2f", currentGreenValue)
-            case 2:
-                blueValueLabel.text = String(format: "%.2f", currentBlueValue)
-//                slider?.value
-            default:break
-            }
-        }
+//        if slider == nil {
+            redValueLabel.text = String(
+                format: "%.2f", currentRedValue
+            )
+            greenValueLabel.text = String(
+                format: "%.2f", currentGreenValue
+            )
+            blueValueLabel.text = String(
+                format: "%.2f", currentBlueValue
+            )
+//        } else {
+//            switch slider?.tag {
+//            case 0:
+//                redValueLabel.text = String(
+//                    format: "%.2f", currentRedValue
+//                )
+//            case 1:
+//                greenValueLabel.text = String(
+//                    format: "%.2f", currentGreenValue
+//                )
+//            case 2:
+//                blueValueLabel.text = String(
+//                    format: "%.2f", currentBlueValue
+//                )
+//            default:break
+//            }
+//        }
     }
 }
 
