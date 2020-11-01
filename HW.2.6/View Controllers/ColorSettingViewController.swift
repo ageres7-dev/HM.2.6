@@ -56,12 +56,9 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Hide keyboard to tap
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super .touchesBegan(touches, with: event)
+        
         resignFirstResponder()
-        
         view.endEditing(true)
-       
-        
-//        setTextFieldValue()
     }
     
     
@@ -73,6 +70,7 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
         case 2: currentBlueValue = CGFloat(sender.value)
         default: break
         }
+        
         updateUI()
         view.endEditing(true)
     }
@@ -85,38 +83,26 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
     }
     // MARK: - Public Methods
     
-//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//
-//        textFieldDidEndEditing(textField)
-//        updateUI()
-//        view.endEditing(true)
-//
-//        return false
-//    }
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         tempString = textField.text
-        
         textField.text = nil
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         var colorValue: CGFloat = 0
         
-        //заменяем запятые
-        let textFormTextField = textField.text?
-            .replacingOccurrences(
-                of: ",",
-                with: "."
-            )
+        replacementCommaOnDot(&textField.text)
+
+        let setValue = Float(textField.text ?? "0") ?? 0
         
-//        let testNil: Float? = Float(textFormTextField)
-        
-        let setValue = Float(textFormTextField ?? "0") ?? 0
-        
-        if  setValue >= 0, setValue <= 1 {
+        if textField.text == "" {
+            textField.text = tempString
+            colorValue = CGFloat(Float(tempString ?? "0")!)
+            
+        } else if  setValue >= 0, setValue <= 1 {
             colorValue = CGFloat(setValue)
             textField.text = string(setValue)
+            
         } else if setValue >= 1 {
             showAlert(with: "😱",
                       and: "Enter a number between 0 and 1")
@@ -124,15 +110,6 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
             colorValue = 1
         }
         
-        
-        
-//        guard testNil == nil else {
-//            textField.text = tempString
-//            colorValue = CGFloat(Float(tempString!)!)
-//            return
-//        }
-    
-
         switch textField.tag {
         case 0:
             currentRedValue = colorValue
@@ -157,17 +134,9 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
     }
     
     private func setTextFieldValue() {
-        redTextField.text = string(currentRedValue) // String(
-//            format: "%.2f", currentRedValue
-//        )
+        redTextField.text = string(currentRedValue)
         greenTextField.text = string(currentGreenValue)
-//            String(
-//            format: "%.2f", currentGreenValue
-//        )
         blueTextField.text = string(currentBlueValue)
-//            String(
-//            format: "%.2f", currentBlueValue
-//        )
     }
     
     private func setRGBValue(color:UIColor) {
@@ -193,25 +162,14 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
         blueSlider.value = Float(currentBlueValue)
     }
     
-    //переделать
     private func setValueToLabels() {
         redValueLabel.text = string(currentRedValue)
-            
-//            = String(
-//            format: "%.2f", currentRedValue
-//        )
         greenValueLabel.text = string(currentGreenValue)
-//            String(
-//            format: "%.2f", currentGreenValue
-//        )
         blueValueLabel.text = string(currentBlueValue)
-//            String(
-//            format: "%.2f", currentBlueValue
-//        )
     }
 }
 
-
+// MARK: - Add "Done" button for keyboard
 extension UITextField {
     //нагуглил https://gist.github.com/jplazcano87/8b5d3bc89c3578e45c3e
     
@@ -234,12 +192,9 @@ extension UITextField {
             barButtonSystemItem: .done,
             target: self,
             action: #selector(endEditing(_:))
-//            action: #selector(resignFirstResponder)
         )
         keyboardToolbar.items = [flexBarButton, doneBarButton]
         inputAccessoryView = keyboardToolbar
-        
-    
     }
     
 }
@@ -259,19 +214,19 @@ extension ColorSettingViewController {
         present(alert, animated: true)
     }
     
-    private func string(_ value: CGFloat) -> String {
-        String(format: "%.2f", value)
+    private func replacementCommaOnDot(_ string: inout String?)  {
+        string = string?.replacingOccurrences(
+                of: ",",
+                with: "."
+            )
     }
+    
     // MARK: - Line shortening
     private func string(_ value: Float) -> String {
         String(format: "%.2f", value)
     }
-    
-    private func converter(text: String) -> String {
-//        var textInput = ""
-        let textFloat = Float(text.replacingOccurrences(of: ",", with: ".")) ?? 0
-            // If the Textfield is empty, 0 will be returned
-            return String(format: "%.2f", textFloat)
-        }
+    private func string(_ value: CGFloat) -> String {
+        string(Float(value))
+    }
     
 }
