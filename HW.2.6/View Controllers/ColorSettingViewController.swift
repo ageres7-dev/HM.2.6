@@ -28,10 +28,6 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
     var delegate: ColorSettingViewControllerDelegate!
     
     // MARK: - Private Properties
-    private var currentRedValue: CGFloat = 0
-    private var currentGreenValue: CGFloat = 0
-    private var currentBlueValue: CGFloat = 0
-    
     private var tempString: String?
     
     // MARK: - Override Methods
@@ -47,140 +43,106 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
         redTextField.delegate = self
         greenTextField.delegate = self
         blueTextField.delegate = self
-        
-        setRGBValue(color: viewBackgrounColor)
 
-        updateUI()
+        inicialSetColorView()
+        setValueToSliders()
+        setValueFor(redValueLabel, greenValueLabel, blueValueLabel)
+        setTextFieldValue()
     }
     
     // MARK: - Hide keyboard to tap
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super .touchesBegan(touches, with: event)
-        
-        resignFirstResponder()
         view.endEditing(true)
     }
-    
     
     // MARK: - IB Action
     @IBAction func rgbSlidersAction(_ sender: UISlider) {
+        setColorToColorView()
+        
         switch sender.tag {
-        case 0: currentRedValue = CGFloat(sender.value)
-        case 1: currentGreenValue = CGFloat(sender.value)
-        case 2: currentBlueValue = CGFloat(sender.value)
+        case 0:
+            redValueLabel.text = string(sender.value)
+            redTextField.text = string(sender.value)
+        case 1:
+            greenValueLabel.text = string(sender.value)
+            greenTextField.text = string(sender.value)
+        case 2:
+            blueValueLabel.text = string(sender.value)
+            blueTextField.text = string(sender.value)
         default: break
         }
-        
-        updateUI()
-        view.endEditing(true)
     }
     
     @IBAction func doneButtonPressed() {
-        delegate.setBackgroung(
-            color: colorView.backgroundColor!
-        )
+        delegate.setBackgroung(color: colorView.backgroundColor!)
         dismiss(animated: true)
     }
     // MARK: - Public Methods
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         tempString = textField.text
-        textField.text = nil
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        var colorValue: CGFloat = 0
-        
         replacementCommaOnDot(&textField.text)
-
-        let setValue = Float(textField.text ?? "0") ?? 0
         
+        var colorValue: Float = 0
+            
         if textField.text == "" {
             textField.text = tempString
-            colorValue = CGFloat(Float(tempString ?? "0")!)
-            
-        } else if  setValue >= 0, setValue <= 1 {
-            colorValue = CGFloat(setValue)
-            textField.text = string(setValue)
-            
-        } else if setValue >= 1 {
-            showAlert(with: "😱",
-                      and: "Enter a number between 0 and 1")
-            textField.text = "1.00"
-            colorValue = 1
+            colorValue = Float(tempString ?? "0")!
+        } else {
+            colorValue = getFloat(from: textField)
+            textField.text = string(colorValue)
         }
-        
-        switch textField.tag {
-        case 0:
-            currentRedValue = colorValue
-        case 1:
-            currentGreenValue = colorValue
-        case 2:
-            currentBlueValue = colorValue
-        default: break
-        }
-       
-        setColorToColorView()
-        setValueToSliders()
-        setValueToLabels()
-        
+        setLabel(value: colorValue, accordingTo: textField)
+        setSlider(value: colorValue, accordingTo: textField)
     }
     // MARK: - Privat Methods
-    private func updateUI() {
-        setColorToColorView()
-        setValueToSliders()
-        setValueToLabels()
-        setTextFieldValue()
-    }
     
     private func setTextFieldValue() {
-        redTextField.text = string(currentRedValue)
-        greenTextField.text = string(currentGreenValue)
-        blueTextField.text = string(currentBlueValue)
+        redTextField.text = string(redSlider.value)
+        greenTextField.text = string(greenSlider.value)
+        blueTextField.text = string(blueSlider.value)
     }
-    
-    private func setRGBValue(color:UIColor) {
-        color.getRed(&currentRedValue,
-                     green: &currentGreenValue,
-                     blue: &currentBlueValue,
-                     alpha: nil)
-    }
-    
+
     private func setColorToColorView() {
-        let currentColor = UIColor(
-            red: currentRedValue,
-            green: currentGreenValue,
-            blue: currentBlueValue,
+        colorView.backgroundColor = UIColor(
+            red: CGFloat(redSlider.value),
+            green: CGFloat(greenSlider.value),
+            blue: CGFloat(blueSlider.value),
             alpha: 1
         )
-        colorView.backgroundColor = currentColor
+    }
+    private func inicialSetColorView() {
+        colorView.backgroundColor = viewBackgrounColor
     }
     
     private func setValueToSliders() {
-        redSlider.value = Float(currentRedValue)
-        greenSlider.value = Float(currentGreenValue)
-        blueSlider.value = Float(currentBlueValue)
+        let ciColor = CIColor(color: viewBackgrounColor)
+        redSlider.value = Float(ciColor.red)
+        greenSlider.value = Float(ciColor.green)
+        blueSlider.value = Float(ciColor.blue)
     }
     
-    private func setValueToLabels() {
-        redValueLabel.text = string(currentRedValue)
-        greenValueLabel.text = string(currentGreenValue)
-        blueValueLabel.text = string(currentBlueValue)
+    private func setValueFor(_ labels: UILabel...) {
+        labels.forEach { label in
+            switch label.tag {
+            case 0: redValueLabel.text = string(from: redSlider)
+            case 1: greenValueLabel.text = string(from: greenSlider)
+            case 2: blueValueLabel.text = string(from: blueSlider)
+            default: break
+            }
+        }
     }
 }
 
 // MARK: - Add "Done" button for keyboard
 extension UITextField {
     func addDoneButtonOnKeyBoardWithControl() {
-        let keyboardToolbar = UIToolbar(frame: CGRect(
-            x: 0,
-            y: 0,
-            width: UIScreen.main.bounds.width,
-            height: 44
-            )
-        )
+        
+        let keyboardToolbar = UIToolbar()
         keyboardToolbar.sizeToFit()
-        keyboardToolbar.barStyle = .default
         let flexBarButton = UIBarButtonItem(
             barButtonSystemItem: .flexibleSpace,
             target: nil,
@@ -199,17 +161,41 @@ extension UITextField {
 
 
 extension ColorSettingViewController {
-    // MARK: - Alert Controller
-    private func showAlert(with title: String,
-                           and message: String) {
-        let alert = UIAlertController(title: title,
-                                      message: message,
-                                      preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "Ok",
-                                     style: .default)
-        
-        alert.addAction(okAction)
-        present(alert, animated: true)
+    
+    private func getFloat(from textField: UITextField) -> Float {
+
+        let setValue = Float(textField.text ?? "0") ?? 0
+        return setValue >= 0 && setValue <= 1 ? setValue : 1
+    }
+    
+    private func setLabel(value: Float, accordingTo textField: UITextField) {
+        switch textField.tag {
+        case 0:
+            redValueLabel.text = string(value)
+            setValueFor(redValueLabel)
+        case 1:
+            greenValueLabel.text = string(value)
+            setValueFor(greenValueLabel)
+        case 2:
+            blueValueLabel.text = string(value)
+            setValueFor(blueValueLabel)
+        default: break
+        }
+    }
+    
+    private func setSlider(value: Float, accordingTo textField: UITextField) {
+        switch textField.tag {
+        case 0:
+            redSlider.value = value
+            rgbSlidersAction(redSlider)
+        case 1:
+            greenSlider.value = value
+            rgbSlidersAction(greenSlider)
+        case 2:
+            blueSlider.value = value
+            rgbSlidersAction(blueSlider)
+        default: break
+        }
     }
     
     private func replacementCommaOnDot(_ string: inout String?)  {
@@ -223,8 +209,10 @@ extension ColorSettingViewController {
     private func string(_ value: Float) -> String {
         String(format: "%.2f", value)
     }
-    private func string(_ value: CGFloat) -> String {
-        string(Float(value))
+
+    
+    private func string(from slider: UISlider) -> String {
+        String(format: "%.2f", slider.value)
     }
     
 }

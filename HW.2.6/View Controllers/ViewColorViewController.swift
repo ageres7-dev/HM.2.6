@@ -12,23 +12,16 @@ protocol ColorSettingViewControllerDelegate {
 }
 
 class ViewColorViewController: UIViewController {
-    // MARK: - IB Outlets
-    
-    
-    
-    
+
     // MARK: - Override Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = randomColor()
     }
-//    @IBAction func unwind(segue: UIStoryboardSegue) {}
 
-    override func prepare(for segue: UIStoryboardSegue,
-                          sender: Any?) {
-       let colorSettingVC = segue.destination
-        as! ColorSettingViewController
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+       let colorSettingVC = segue.destination as! ColorSettingViewController
         colorSettingVC.viewBackgrounColor = view.backgroundColor
         colorSettingVC.delegate = self
     }
@@ -43,8 +36,7 @@ class ViewColorViewController: UIViewController {
     }
 }
 
-extension ViewColorViewController:
-    ColorSettingViewControllerDelegate {
+extension ViewColorViewController: ColorSettingViewControllerDelegate {
     func setBackgroung(color: UIColor) {
         view.backgroundColor = color
     }
