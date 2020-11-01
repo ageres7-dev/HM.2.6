@@ -7,8 +7,8 @@
 
 import UIKit
 
-class ColorSettingViewController: UIViewController {
-
+class ColorSettingViewController: UIViewController, UITextFieldDelegate {
+    // MARK: - IB Outlets
     @IBOutlet var colorView: UIView!
     
     @IBOutlet var redSlider: UISlider!
@@ -19,30 +19,48 @@ class ColorSettingViewController: UIViewController {
     @IBOutlet var greenValueLabel: UILabel!
     @IBOutlet var blueValueLabel: UILabel!
     
+    @IBOutlet var redTextField: UITextField!
+    @IBOutlet var greenTextField: UITextField!
+    @IBOutlet var blueTextField: UITextField!
+    
+    // MARK: - Public Properties
     var viewBackgrounColor: UIColor!
     var delegate: ColorSettingViewControllerDelegate!
     
-//    var currentColorView: UIColor {
-//        colorView.backgroundColor!
-//    }
-    
+    // MARK: - Private Properties
     private var currentRedValue: CGFloat = 0
     private var currentGreenValue: CGFloat = 0
     private var currentBlueValue: CGFloat = 0
     
+    // MARK: - Override Methods
     override func viewDidLoad() {
         super.viewDidLoad()
    
+        redTextField.addDoneButtonOnKeyBoardWithControl()
+        greenTextField.addDoneButtonOnKeyBoardWithControl()
+        blueTextField.addDoneButtonOnKeyBoardWithControl()
+        
         colorView.layer.cornerRadius = 15
         
+        redTextField.delegate = self
+        greenTextField.delegate = self
+        blueTextField.delegate = self
+        
         setRGBValue(color: viewBackgrounColor)
-//        colorView.backgroundColor = viewBackgrounColor
-        setColorToColorView()
-        setValueToSliders()
-        setValueToLabels()
+
+        updateUI()
+    }
+    
+    // MARK: - Hide keyboard to tap
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super .touchesBegan(touches, with: event)
+        view.endEditing(true)
+        
+//        setTextFieldValue()
     }
     
     
+    // MARK: - IB Action
     @IBAction func rgbSlidersAction(_ sender: UISlider) {
         switch sender.tag {
         case 0: currentRedValue = CGFloat(sender.value)
@@ -50,9 +68,7 @@ class ColorSettingViewController: UIViewController {
         case 2: currentBlueValue = CGFloat(sender.value)
         default: break
         }
-//        print("rgbSlidersAction - red \(currentRedValue), green \(currentGreenValue), blue \(currentBlueValue) ")
-        setValueToLabels(sender)
-        setColorToColorView()
+        updateUI()
     }
     
     @IBAction func doneButtonPressed() {
@@ -61,14 +77,82 @@ class ColorSettingViewController: UIViewController {
         )
         dismiss(animated: true)
     }
+    // MARK: - Public Methods
+    
+//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//
+//        textFieldDidEndEditing(textField)
+//        updateUI()
+//        view.endEditing(true)
+//
+//        return false
+//    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.text = nil
+    }
+    
+    
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        var colorValue: CGFloat = 0
+        
+        if let setValue = (Float(textField.text!)),
+           setValue <= 1,
+           setValue >= 0 {
+            colorValue = CGFloat(setValue)
+            textField.text = string(setValue) //String(format: "%.2f", setValue)
+        } else {
+            showAlert(with: "Wrong number", and: "😱😱😱")
+            textField.text = "0.00"
+//            setValue >= 1 ? "1" : "0"
+        }
+        
+        
+//        let colorValue = CGFloat(Float((textField.text)!) ?? 0)
+        
+        switch textField.tag {
+        case 0:
+            currentRedValue = colorValue
+        case 1:
+            currentGreenValue = colorValue
+        case 2:
+            currentBlueValue = colorValue
+        default: break
+        }
+       
+        setColorToColorView()
+        setValueToSliders()
+        setValueToLabels()
+        
+    }
+    // MARK: - Privat Methods
+    private func updateUI() {
+        setColorToColorView()
+        setValueToSliders()
+        setValueToLabels()
+        setTextFieldValue()
+    }
+    
+    private func setTextFieldValue() {
+        redTextField.text = string(currentRedValue) // String(
+//            format: "%.2f", currentRedValue
+//        )
+        greenTextField.text = string(currentGreenValue)
+//            String(
+//            format: "%.2f", currentGreenValue
+//        )
+        blueTextField.text = string(currentBlueValue)
+//            String(
+//            format: "%.2f", currentBlueValue
+//        )
+    }
     
     private func setRGBValue(color:UIColor) {
         color.getRed(&currentRedValue,
                      green: &currentGreenValue,
                      blue: &currentBlueValue,
                      alpha: nil)
-//        print("setRGBValue - red \(currentRedValue), green \(currentGreenValue), blue \(currentBlueValue) ")
-//
     }
     
     private func setColorToColorView() {
@@ -88,34 +172,76 @@ class ColorSettingViewController: UIViewController {
     }
     
     //переделать
-    private func setValueToLabels(_ slider: UISlider? = nil) {
-//        if slider == nil {
-            redValueLabel.text = String(
-                format: "%.2f", currentRedValue
-            )
-            greenValueLabel.text = String(
-                format: "%.2f", currentGreenValue
-            )
-            blueValueLabel.text = String(
-                format: "%.2f", currentBlueValue
-            )
-//        } else {
-//            switch slider?.tag {
-//            case 0:
-//                redValueLabel.text = String(
-//                    format: "%.2f", currentRedValue
-//                )
-//            case 1:
-//                greenValueLabel.text = String(
-//                    format: "%.2f", currentGreenValue
-//                )
-//            case 2:
-//                blueValueLabel.text = String(
-//                    format: "%.2f", currentBlueValue
-//                )
-//            default:break
-//            }
-//        }
+    private func setValueToLabels() {
+        redValueLabel.text = string(currentRedValue)
+            
+//            = String(
+//            format: "%.2f", currentRedValue
+//        )
+        greenValueLabel.text = string(currentGreenValue)
+//            String(
+//            format: "%.2f", currentGreenValue
+//        )
+        blueValueLabel.text = string(currentBlueValue)
+//            String(
+//            format: "%.2f", currentBlueValue
+//        )
     }
 }
 
+
+extension UITextField {
+    //нагуглил https://gist.github.com/jplazcano87/8b5d3bc89c3578e45c3e
+    
+    func addDoneButtonOnKeyBoardWithControl() {
+        let keyboardToolbar = UIToolbar(frame: CGRect(
+            x: 0,
+            y: 0,
+            width: UIScreen.main.bounds.width,
+            height: 44
+            )
+        )
+        keyboardToolbar.sizeToFit()
+        keyboardToolbar.barStyle = .default
+        let flexBarButton = UIBarButtonItem(
+            barButtonSystemItem: .flexibleSpace,
+            target: nil,
+            action: nil
+        )
+        let doneBarButton = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(endEditing(_:))
+//            action: #selector(resignFirstResponder)
+        )
+        keyboardToolbar.items = [flexBarButton, doneBarButton]
+        inputAccessoryView = keyboardToolbar
+        
+    
+    }
+    
+}
+
+
+extension ColorSettingViewController {
+    // MARK: - Alert Controller
+    private func showAlert(with title: String,
+                           and message: String) {
+        let alert = UIAlertController(title: title,
+                                      message: message,
+                                      preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ok",
+                                     style: .default)
+        
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+    
+    private func string(_ value: CGFloat) -> String {
+        String(format: "%.2f", value)
+    }
+    // MARK: - Line shortening
+    private func string(_ value: Float) -> String {
+        String(format: "%.2f", value)
+    }
+}
