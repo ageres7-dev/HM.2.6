@@ -32,6 +32,8 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
     private var currentGreenValue: CGFloat = 0
     private var currentBlueValue: CGFloat = 0
     
+    private var tempString: String?
+    
     // MARK: - Override Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,7 +56,10 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Hide keyboard to tap
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super .touchesBegan(touches, with: event)
+        resignFirstResponder()
+        
         view.endEditing(true)
+       
         
 //        setTextFieldValue()
     }
@@ -69,6 +74,7 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
         default: break
         }
         updateUI()
+        view.endEditing(true)
     }
     
     @IBAction func doneButtonPressed() {
@@ -89,28 +95,44 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
 //    }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        tempString = textField.text
+        
         textField.text = nil
     }
-    
-    
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         var colorValue: CGFloat = 0
         
-        if let setValue = (Float(textField.text!)),
-           setValue <= 1,
-           setValue >= 0 {
+        //заменяем запятые
+        let textFormTextField = textField.text?
+            .replacingOccurrences(
+                of: ",",
+                with: "."
+            )
+        
+//        let testNil: Float? = Float(textFormTextField)
+        
+        let setValue = Float(textFormTextField ?? "0") ?? 0
+        
+        if  setValue >= 0, setValue <= 1 {
             colorValue = CGFloat(setValue)
-            textField.text = string(setValue) //String(format: "%.2f", setValue)
-        } else {
-            showAlert(with: "Wrong number", and: "😱😱😱")
-            textField.text = "0.00"
-//            setValue >= 1 ? "1" : "0"
+            textField.text = string(setValue)
+        } else if setValue >= 1 {
+            showAlert(with: "😱",
+                      and: "Enter a number between 0 and 1")
+            textField.text = "1.00"
+            colorValue = 1
         }
         
         
-//        let colorValue = CGFloat(Float((textField.text)!) ?? 0)
         
+//        guard testNil == nil else {
+//            textField.text = tempString
+//            colorValue = CGFloat(Float(tempString!)!)
+//            return
+//        }
+    
+
         switch textField.tag {
         case 0:
             currentRedValue = colorValue
@@ -244,4 +266,12 @@ extension ColorSettingViewController {
     private func string(_ value: Float) -> String {
         String(format: "%.2f", value)
     }
+    
+    private func converter(text: String) -> String {
+//        var textInput = ""
+        let textFloat = Float(text.replacingOccurrences(of: ",", with: ".")) ?? 0
+            // If the Textfield is empty, 0 will be returned
+            return String(format: "%.2f", textFloat)
+        }
+    
 }
