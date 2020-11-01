@@ -171,8 +171,6 @@ class ColorSettingViewController: UIViewController, UITextFieldDelegate {
 
 // MARK: - Add "Done" button for keyboard
 extension UITextField {
-    //нагуглил https://gist.github.com/jplazcano87/8b5d3bc89c3578e45c3e
-    
     func addDoneButtonOnKeyBoardWithControl() {
         let keyboardToolbar = UIToolbar(frame: CGRect(
             x: 0,
